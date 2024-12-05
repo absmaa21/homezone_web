@@ -7,10 +7,9 @@ import {Storage} from "../utils/Storage.ts";
 interface UserContextProps {
   user: User | null;
   register: (uname: string, email: string, password: string) => void;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<string>;
   refreshToken: () => void;
   logout: () => void;
-  getInfo: (accessToken: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -50,6 +49,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
           return false;
         }
         console.log("Successfully registered!");
+        navigate("/login")
         return true
       })
       .catch((err) => console.error("Network error: ", err));
@@ -57,7 +57,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     return false
   };
 
-  const login = async (email: string, password: string): Promise<void> => {
+  const login = async (email: string, password: string): Promise<string> => {
     if (env === Environment.FRONTEND) {
       setUser({
         id: 'abc123-dfg-456',
@@ -68,39 +68,61 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
         created_at: Date.now() - 543243,
         updated_at: Date.now(),
       })
-      return
+      return 'Frontend Environment! Skipping login fetch.'
     }
 
     try {
-      const loginFetch: LoginEndpointResponse = await (
-        await fetch(`${base_url}/user/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({email, password}),
-        })
-      ).json();
+      const loginResponse = await fetch(`${base_url}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({email, password}),
+      })
 
-      setUser({
-        ...loginFetch,
+      if (!loginResponse.ok) {
+        return loginResponse.statusText
+      }
+
+      let tempUser: User = {
+        ...(await loginResponse.json()),
         id: '',
         username: '',
         email: '',
         created_at: -1,
         updated_at: -1,
-      })
-
-      if (!loginFetch.access_token) {
-        console.error("User not found! " + JSON.stringify(loginFetch))
-        return
       }
 
-      await getInfo(loginFetch.access_token)
+      if (!tempUser.access_token) {
+        console.error("User not found! " + JSON.stringify(tempUser))
+        return "User is invalid! Try again."
+      }
+
+      const infoFetch: InfoEndpointResponse = await (
+        await fetch(`${base_url}/user/info`, {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + tempUser.access_token,
+          },
+        })
+      ).json();
+
+      tempUser = {
+        ...infoFetch,
+        ...tempUser,
+        username: infoFetch.name,
+        created_at: Date.parse(infoFetch.created_at),
+        updated_at: Date.parse(infoFetch.updated_at),
+      }
+
+      setUser(tempUser)
       console.log("Login successful!")
     } catch (err) {
       console.error("Error logging in: ", err);
+      return "Something went wrong! Try again."
     }
+
+    return "Login successful!"
   };
 
   const refreshToken = () => {
@@ -137,32 +159,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
   };
 
-  const getInfo = async (accessToken: string) => {
-    if (!user) return
-
-    console.log("Fetching user info...");
-    const infoFetch: InfoEndpointResponse = await (
-      await fetch(`${base_url}/user/info`, {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      })
-    ).json();
-
-    setUser({
-      ...user,
-      ...infoFetch,
-      username: infoFetch.name,
-      created_at: Date.parse(infoFetch.created_at),
-      updated_at: Date.parse(infoFetch.updated_at),
-    });
-    console.log("Info Fetch successful!");
-  };
-
   return (
     <UserContext.Provider
-      value={{user, register, login, refreshToken, logout, getInfo}}
+      value={{user, register, login, refreshToken, logout}}
     >
       {children}
     </UserContext.Provider>
