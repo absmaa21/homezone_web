@@ -1,6 +1,6 @@
-import React, {createContext, useState, useEffect, useContext} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {InfoEndpointResponse, LoginEndpointResponse, User} from "../models/User.ts";
-import {ip_address} from "../../env.ts";
+import {base_url, env, Environment} from "../../env.ts";
 import {useNavigate} from "react-router-dom";
 
 interface UserContextProps {
@@ -10,7 +10,6 @@ interface UserContextProps {
   refreshToken: () => void;
   logout: () => void;
   getInfo: (accessToken: string) => Promise<void>;
-  isLoggedIn: boolean;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -18,29 +17,26 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const navigate = useNavigate()
   const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setIsLoggedIn(true);
       localStorage.setItem("user", JSON.stringify(user))
       navigate("/")
-    } else {
-      setIsLoggedIn(false)
-      if (window.location.href.includes("login") || window.location.href.includes("register")) return
-      navigate("/login")
+      return
     }
-  }, [navigate, user]);
+    if (window.location.href.includes("login") || window.location.href.includes("register")) return
 
-  useEffect(() => {
     const storedUser = localStorage.getItem("user")
     if (storedUser) {
       setUser(JSON.parse(storedUser))
+      return
     }
-  }, []);
+
+    navigate("/login")
+  }, [navigate, user]);
 
   const register = (uname: string, email: string, password: string): boolean => {
-    fetch(`http://${ip_address}/user/register`, {
+    fetch(`${base_url}/user/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,9 +57,22 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
   };
 
   const login = async (email: string, password: string): Promise<void> => {
+    if (env === Environment.FRONTEND) {
+      setUser({
+        id: 'abc123-dfg-456',
+        username: 'orcan',
+        email: 'orcan@gmail.com',
+        access_token: 'eyra',
+        refresh_token: 'neyra',
+        created_at: Date.now() - 543243,
+        updated_at: Date.now(),
+      })
+      return
+    }
+
     try {
       const loginFetch: LoginEndpointResponse = await (
-        await fetch(`http://${ip_address}/user/login`, {
+        await fetch(`${base_url}/user/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -99,8 +108,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
   };
 
   const logout = () => {
+    if (env === Environment.FRONTEND) {
+      localStorage.removeItem("user")
+      setUser(null)
+      return
+    }
+
     if (user?.access_token) {
-      fetch(`http://${ip_address}/user/logout`, {
+      fetch(`${base_url}/user/logout`, {
         method: "POST",
         headers: {
           Authorization: "Bearer " + user.access_token,
@@ -110,7 +125,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
           if (r.ok) {
             localStorage.removeItem("user")
             setUser(null);
-            setIsLoggedIn(false);
             console.log("Logged out successfully.");
           } else {
             console.error("Error logging out.");
@@ -127,7 +141,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     console.log("Fetching user info...");
     const infoFetch: InfoEndpointResponse = await (
-      await fetch(`http://${ip_address}/user/info`, {
+      await fetch(`${base_url}/user/info`, {
         method: "GET",
         headers: {
           Authorization: "Bearer " + accessToken,
@@ -147,7 +161,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
   return (
     <UserContext.Provider
-      value={{user, register, login, refreshToken, logout, getInfo, isLoggedIn}}
+      value={{user, register, login, refreshToken, logout, getInfo }}
     >
       {children}
     </UserContext.Provider>

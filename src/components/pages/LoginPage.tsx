@@ -1,6 +1,6 @@
 import {TextField, Button, Box, Typography} from '@mui/material';
 import {useUser} from "../../contexts/UserContext.tsx";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 interface formProps {
   email: string,
@@ -23,7 +23,7 @@ const LoginPage = () => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      sx={{width: 400, margin: 'auto', marginTop: '20vh'}}
+      sx={{width: 400, margin: 'auto'}}
     >
       <Typography variant="h4" gutterBottom>
         Login
