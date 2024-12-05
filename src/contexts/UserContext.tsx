@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
-import {InfoEndpointResponse, LoginEndpointResponse, User} from "../models/User.ts";
+import {InfoEndpointResponse, User} from "../models/User.ts";
 import {base_url, env, Environment} from "../../env.ts";
 import {useNavigate} from "react-router-dom";
 import {Storage} from "../utils/Storage.ts";
@@ -10,6 +10,7 @@ interface UserContextProps {
   login: (email: string, password: string) => Promise<string>;
   refreshToken: () => void;
   logout: () => void;
+  invalidateToken: () => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -17,6 +18,7 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const navigate = useNavigate()
   const [user, setUser] = useState<User | null>(null);
+  const [tokenInvalid, setTokenInvalid] = useState<boolean>(false)
 
   useEffect(() => {
     if (user) {
@@ -34,6 +36,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     navigate("/login")
   }, [navigate, user]);
+
+  useEffect(() => {
+    if (tokenInvalid) refreshToken()
+  }, [tokenInvalid]);
 
   const register = (uname: string, email: string, password: string): boolean => {
     fetch(`${base_url}/user/register`, {
@@ -161,7 +167,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
   return (
     <UserContext.Provider
-      value={{user, register, login, refreshToken, logout}}
+      value={{user, register, login, refreshToken, logout, invalidateToken: () => setTokenInvalid(true)}}
     >
       {children}
     </UserContext.Provider>

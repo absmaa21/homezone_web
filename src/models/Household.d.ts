@@ -1,0 +1,3 @@
+interface Household {
+  name: string,
+}

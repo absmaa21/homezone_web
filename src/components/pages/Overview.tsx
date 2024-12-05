@@ -1,5 +1,6 @@
 import {useUser} from "../../contexts/UserContext.tsx";
 import {Button, Grid2} from "@mui/material";
+import CreateHousehold from "../CreateHousehold.tsx";
 
 function Overview() {
   const User = useUser()
@@ -11,6 +12,8 @@ function Overview() {
       <Button onClick={User.logout}>
         Logout
       </Button>
+      <hr/>
+      <CreateHousehold/>
     </Grid2>
   );
 }
