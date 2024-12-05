@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useState} from "react";
 import {InfoEndpointResponse, LoginEndpointResponse, User} from "../models/User.ts";
 import {base_url, env, Environment} from "../../env.ts";
 import {useNavigate} from "react-router-dom";
+import {Storage} from "../utils/Storage.ts";
 
 interface UserContextProps {
   user: User | null;
@@ -20,13 +21,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user))
+      Storage.save("user", user)
       navigate("/")
       return
     }
     if (window.location.href.includes("login") || window.location.href.includes("register")) return
 
-    const storedUser = localStorage.getItem("user")
+    const storedUser = Storage.load("user")
     if (storedUser) {
       setUser(JSON.parse(storedUser))
       return
@@ -109,7 +110,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
   const logout = () => {
     if (env === Environment.FRONTEND) {
-      localStorage.removeItem("user")
+      Storage.remove("user")
       setUser(null)
       return
     }
@@ -123,7 +124,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       })
         .then((r) => {
           if (r.ok) {
-            localStorage.removeItem("user")
+            Storage.remove("user")
             setUser(null);
             console.log("Logged out successfully.");
           } else {
@@ -161,7 +162,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
   return (
     <UserContext.Provider
-      value={{user, register, login, refreshToken, logout, getInfo }}
+      value={{user, register, login, refreshToken, logout, getInfo}}
     >
       {children}
     </UserContext.Provider>
