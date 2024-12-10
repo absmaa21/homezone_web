@@ -26,15 +26,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       navigate("/")
       return
     }
-    if (window.location.href.includes("login") || window.location.href.includes("register")) return
 
     const storedUser = Storage.load("user")
     if (storedUser) {
       setUser(JSON.parse(storedUser))
       return
     }
-
-    navigate("/login")
   }, [navigate, user]);
 
   useEffect(() => {

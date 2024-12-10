@@ -24,6 +24,7 @@ const LoginPage = () => {
       alignItems="center"
       justifyContent="center"
       sx={{width: 400, margin: 'auto'}}
+      padding={1}
     >
       <Typography variant="h4" gutterBottom>
         Login
