@@ -23,7 +23,7 @@ function UserAvatar() {
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [showRegDialog, setShowRegDialog] = useState(false)
-  const [regSuccessful, setRegSuccessful] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -36,6 +36,7 @@ function UserAvatar() {
   const handleLogout = () => {
     handleCloseUserMenu()
     User.logout()
+    setSuccessMessage('Successfully logged out!')
   }
 
   const handleOpenRegister = () => {
@@ -49,7 +50,7 @@ function UserAvatar() {
 
   const handleRegisterSuccessful = () => {
     handleCloseRegister()
-    setRegSuccessful(true)
+    setSuccessMessage('Successfully registered!')
   }
 
   useEffect(() => {
@@ -61,11 +62,11 @@ function UserAvatar() {
     return (
       <Box sx={{flexGrow: 0}}>
         <Snackbar
-          open={regSuccessful}
+          open={successMessage.length > 0}
           autoHideDuration={5000}
-          onClose={() => setRegSuccessful(false)}
-          onClick={() => setRegSuccessful(false)}
-          message="Successfully registered!"
+          onClose={() => setSuccessMessage('')}
+          onClick={() => setSuccessMessage('')}
+          message={successMessage}
         />
 
         <Dialog
@@ -111,7 +112,7 @@ function UserAvatar() {
           open={Boolean(anchorElUser)}
           onClose={handleCloseUserMenu}
         >
-          <LoginPage/>
+          <LoginPage onSuccess={() => setSuccessMessage('Successfully logged in!')} />
           <Button sx={{ml: 1}} onClick={handleOpenRegister}>
             Create an account
           </Button>
@@ -124,7 +125,7 @@ function UserAvatar() {
     <Box sx={{flexGrow: 0}}>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
+          <Avatar alt={User.user.username} src="/static/images/avatar/2.jpg"/>
         </IconButton>
       </Tooltip>
       <Menu

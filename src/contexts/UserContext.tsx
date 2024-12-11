@@ -71,7 +71,7 @@ const login = async (email: string, password: string): Promise<string> => {
       created_at: Date.now() - 543243,
       updated_at: Date.now(),
     })
-    return 'Frontend Environment! Skipping login fetch.'
+    return ''
   }
 
   try {
@@ -125,7 +125,7 @@ const login = async (email: string, password: string): Promise<string> => {
     return "Something went wrong! Try again."
   }
 
-  return "Login successful!"
+  return ""
 };
 
 const refreshToken = () => {

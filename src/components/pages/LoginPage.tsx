@@ -7,14 +7,18 @@ interface formProps {
   password: string,
 }
 
-const LoginPage = () => {
+const LoginPage = ({onSuccess}: {onSuccess?: () => void}) => {
   const User = useUser()
 
   const [form, setForm] = useState<formProps>({email: '', password: ''})
 
   const handleLogin = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    User.login(form.email, form.password)
+    User.login(form.email, form.password).then(r => {
+      if (r.length > 0) {
+        // TODO handle Error
+      } else if (onSuccess) onSuccess()
+    })
   };
 
   return (
