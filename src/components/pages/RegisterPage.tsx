@@ -1,4 +1,4 @@
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box } from '@mui/material';
 import {useUser} from "../../contexts/UserContext.tsx";
 import {useState} from "react";
 
@@ -9,7 +9,7 @@ interface formProp {
   conPassword: string,
 }
 
-const RegisterPage = () => {
+const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
   const User = useUser()
   const [form, setForm] = useState<formProp>({uname: '', email: '', password: '', conPassword: ''})
 
@@ -19,7 +19,14 @@ const RegisterPage = () => {
       console.log("Passwords do not match!")
       return
     }
-    User.register(form.uname, form.email, form.password)
+    User.register(form.uname, form.email, form.password).then(r => {
+      if(!r) {
+        if (onSuccess) onSuccess()
+        return
+      }
+
+      // TODO error handling
+    })
   };
 
   return (
@@ -28,11 +35,8 @@ const RegisterPage = () => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      sx={{ width: 400, margin: 'auto', marginTop: '20vh' }}
+      sx={{ width: 400 }}
     >
-      <Typography variant="h4" gutterBottom>
-        Register
-      </Typography>
       <form onSubmit={handleRegister} style={{ width: '100%' }}>
         <TextField
           fullWidth
