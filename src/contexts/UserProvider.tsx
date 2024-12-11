@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {InfoEndpointResponse, User} from "../models/User.ts";
 import {base_url, env, Environment} from "../../env.ts";
 import {Storage} from "../utils/Storage.ts";
-import { UserContext } from "./Contexts.tsx";
+import {UserContext} from "./Contexts.tsx";
 import {useToast} from "../hooks/useToast.tsx";
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -27,10 +27,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     if (tokenInvalid) refreshToken()
   }, [tokenInvalid]);
 
-  const register = async (uname: string, email: string, password: string): Promise<string> => {
+  const register = async (uname: string, email: string, password: string): Promise<void> => {
     if (env === Environment.FRONTEND) {
       Toast.push('ENV is Frontend. Skipping register.')
-      return ''
+      return
     }
 
     const r = await fetch(`${base_url}/user/register`, {
@@ -41,18 +41,27 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       body: JSON.stringify({name: uname, email, password}),
     })
 
-    if (!r.ok) {
-      Toast.push(r.statusText, 'error')
-      console.error("Error registering: " + r.statusText);
-      return r.statusText
+    if (r.status === 400) {
+      Toast.push('Invalid or missing body!', 'error')
+      return
+    } else if (r.status === 409) {
+      Toast.push('Email already in use!', 'warning')
+      return
+    } else if (r.status === 422) {
+      Toast.push('Invalid values!', 'error')
+      return
+    } else if (r.status === 500) {
+      Toast.push('Internal Server error! Try again.', 'error')
+      return
+    } else if (r.status !== 200) {
+      Toast.push('Something went wrong! Try again.', 'error')
+      return
     }
 
     Toast.push('Successfully registered!')
-    console.log("Successfully registered!");
-    return ''
   };
 
-  const login = async (email: string, password: string): Promise<string> => {
+  const login = async (email: string, password: string): Promise<void> => {
     if (env === Environment.FRONTEND) {
       setUser({
         id: 'abc123-dfg-456',
@@ -64,73 +73,71 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
         updated_at: Date.now(),
       })
       Toast.push('ENV is Frontend. Skipping login.')
-      return ''
+      return
     }
 
-    try {
-      const loginResponse = await fetch(`${base_url}/user/login`, {
-        method: "POST",
+    const loginResponse = await fetch(`${base_url}/user/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({email, password}),
+    })
+
+    if (loginResponse.status === 400) {
+      Toast.push('Invalid or missing body!', 'error')
+      return
+    } else if ([401, 204].includes(loginResponse.status)) {
+      Toast.push('Invalid credentials!', 'warning')
+      return
+    } else if (loginResponse.status !== 200) {
+      Toast.push('Something went wrong! Try again.', 'error')
+      return
+    }
+
+    let tempUser: User = {
+      ...(await loginResponse.json()),
+      id: '',
+      username: '',
+      email: '',
+      created_at: -1,
+      updated_at: -1,
+    }
+
+    if (!tempUser.access_token) {
+      console.error("User not found! " + JSON.stringify(tempUser))
+      Toast.push('User is invalid. Try again.', 'error')
+      return
+    }
+
+    const infoFetch: InfoEndpointResponse = await (
+      await fetch(`${base_url}/user/info`, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: "Bearer " + tempUser.access_token,
         },
-        body: JSON.stringify({email, password}),
       })
+    ).json();
 
-      if (!loginResponse.ok) {
-        Toast.push(loginResponse.statusText, 'error')
-        return loginResponse.statusText
-      }
-
-      let tempUser: User = {
-        ...(await loginResponse.json()),
-        id: '',
-        username: '',
-        email: '',
-        created_at: -1,
-        updated_at: -1,
-      }
-
-      if (!tempUser.access_token) {
-        console.error("User not found! " + JSON.stringify(tempUser))
-        Toast.push('User is invalid. Try again.', 'error')
-        return "User is invalid! Try again."
-      }
-
-      const infoFetch: InfoEndpointResponse = await (
-        await fetch(`${base_url}/user/info`, {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + tempUser.access_token,
-          },
-        })
-      ).json();
-
-      tempUser = {
-        ...infoFetch,
-        ...tempUser,
-        username: infoFetch.name,
-        created_at: Date.parse(infoFetch.created_at),
-        updated_at: Date.parse(infoFetch.updated_at),
-      }
-
-      setUser(tempUser)
-      console.log("Login successful!")
-      Toast.push('Login successful!')
-    } catch (err) {
-      console.error("Error logging in: ", err);
-      Toast.push('Something went wrong! Try again.')
-      return "Something went wrong! Try again."
+    tempUser = {
+      ...infoFetch,
+      ...tempUser,
+      username: infoFetch.name,
+      created_at: Date.parse(infoFetch.created_at),
+      updated_at: Date.parse(infoFetch.updated_at),
     }
 
-    return ""
+    setUser(tempUser)
+    console.log("Login successful!")
+    Toast.push('Login successful!')
   };
 
   const refreshToken = () => {
     console.log("Refreshing token...");
-    // TODO
+    // TODO flr schuld
   };
 
-  const logout = () => {
+  const logout = async () => {
     if (env === Environment.FRONTEND) {
       Storage.remove("user")
       setUser(null)
@@ -138,27 +145,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       return
     }
 
-    if (user?.access_token) {
-      fetch(`${base_url}/user/logout`, {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + user.access_token,
-        },
-      })
-        .then((r) => {
-          if (r.ok) {
-            Storage.remove("user")
-            setUser(null);
-            Toast.push('Logout was successful.')
-          } else {
-            Toast.push('Error logging out.', 'error')
-            console.error("Error logging out. ", r.statusText);
-          }
-        })
-        .catch((err) => console.error("Network error: ", err));
-    } else {
-      Toast.push('Something went wrong! Try again.', 'error')
+    if (!user?.access_token) {
+      Toast.push('Something went wrong! Refresh website.', 'error')
+      return;
     }
+
+    const r = await fetch(`${base_url}/user/logout`, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + user.access_token,
+      },
+    })
+
+    if (r.status !== 200) {
+      Toast.push('Something went wrong! Try again.', 'error')
+      return
+    }
+
+    Storage.remove("user")
+    setUser(null);
+    Toast.push('Logout was successful.')
   };
 
   return (

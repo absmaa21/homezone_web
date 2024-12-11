@@ -5,8 +5,8 @@ import {Message} from "./ToastProvider.tsx";
 
 export interface UserContextProps {
   user: User | null;
-  register: (uname: string, email: string, password: string) => Promise<string>;
-  login: (email: string, password: string) => Promise<string>;
+  register: (uname: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   refreshToken: () => void;
   logout: () => void;
   invalidateToken: () => void;
