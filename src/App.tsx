@@ -9,7 +9,7 @@ import {Grid2} from "@mui/material";
 function App() {
 
   return (
-    <Grid2 direction={"column"}>
+    <Grid2>
       <Header/>
       <div className={'content'}>
         <Routes>

@@ -1,11 +1,12 @@
-import {Avatar, Box, Button, IconButton, Menu, MenuItem, Tooltip, Typography} from "@mui/material";
-import React, {useState} from "react";
+import {Avatar, Box, Button, IconButton, Menu, MenuItem, Tooltip, Typography, useTheme} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import {useUser} from "../contexts/UserContext.tsx";
 import LoginIcon from '@mui/icons-material/Login';
 import LoginPage from "./pages/LoginPage.tsx";
 
 function UserAvatar() {
   const User = useUser()
+  const Theme = useTheme()
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -18,20 +19,34 @@ function UserAvatar() {
   };
 
   const handleLogout = () => {
-    User.logout()
     handleCloseUserMenu()
+    User.logout()
   }
+
+  useEffect(() => {
+    handleCloseUserMenu()
+  }, [User.user]);
 
   // Show this if the user is not logged in
   if (!User.user) {
     return (
       <Box sx={{flexGrow: 0}}>
         <Tooltip title="Click to login">
-          <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-            <Avatar alt={"Login"}>
-              <LoginIcon/>
-            </Avatar>
-          </IconButton>
+          <Button onClick={handleOpenUserMenu} sx={{p: 1}}>
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                mr: 2,
+                display: {xs: 'none', md: 'flex'},
+                flexGrow: 1,
+                fontFamily: 'monospace',
+                color: Theme.palette.primary.contrastText,
+                textDecoration: 'none',
+              }}
+            >Login</Typography>
+            <LoginIcon sx={{color: Theme.palette.primary.contrastText}}/>
+          </Button>
         </Tooltip>
         <Menu
           sx={{mt: '45px'}}

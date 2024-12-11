@@ -33,7 +33,7 @@ const LoginPage = () => {
         <TextField
           fullWidth
           label="Email"
-          variant="outlined"
+          variant="filled"
           margin="normal"
           required
           value={form.email}
@@ -42,7 +42,7 @@ const LoginPage = () => {
         <TextField
           fullWidth
           label="Password"
-          variant="outlined"
+          variant="filled"
           margin="normal"
           type="password"
           required

@@ -46,7 +46,6 @@ function Header() {
           >
             HomeZone
           </Typography>
-
           <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
             <IconButton
               size="large"
@@ -81,12 +80,15 @@ function Header() {
               ))}
             </Menu>
           </Box>
+
+          {/*MEDIUM DEVICES*/}
+
           {/* PLACE ICON HERE */}
           <Typography
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: {xs: 'flex', md: 'none'},
@@ -98,7 +100,7 @@ function Header() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            HomeZone
           </Typography>
           <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
             {pages.map((page) => (
