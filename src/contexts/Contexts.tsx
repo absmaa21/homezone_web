@@ -20,3 +20,11 @@ export interface ToastContextProps {
   clear: () => void,
 }
 export const ToastContext = createContext<ToastContextProps | undefined>(undefined)
+
+
+export interface HouseholdContextProps {
+  household: Household | null,
+  join: (code: string) => Promise<void>,
+  create: () => Promise<void>,
+}
+export const HouseholdContext = createContext<HouseholdContextProps | undefined>(undefined)

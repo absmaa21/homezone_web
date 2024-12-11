@@ -1,6 +1,7 @@
 import {Button, Grid2} from "@mui/material";
 import CreateHousehold from "../CreateHousehold.tsx";
 import {useUser} from "../../hooks/useUser.tsx";
+import JoinHousehold from "../JoinHousehold.tsx";
 
 function Overview() {
   const User = useUser()
@@ -14,6 +15,7 @@ function Overview() {
       </Button>
       <hr/>
       <CreateHousehold/>
+      <JoinHousehold/>
     </Grid2>
   );
 }
