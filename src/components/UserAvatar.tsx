@@ -6,16 +6,16 @@ import {
   DialogContent, DialogTitle,
   IconButton,
   Menu,
-  MenuItem, Snackbar,
+  MenuItem,
   Tooltip,
   Typography,
   useTheme
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {useUser} from "../contexts/UserContext.tsx";
 import LoginIcon from '@mui/icons-material/Login';
 import LoginPage from "./pages/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
+import {useUser} from "../hooks/useUser.tsx";
 
 function UserAvatar() {
   const User = useUser()
@@ -23,7 +23,6 @@ function UserAvatar() {
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [showRegDialog, setShowRegDialog] = useState(false)
-  const [successMessage, setSuccessMessage] = useState('')
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -36,7 +35,6 @@ function UserAvatar() {
   const handleLogout = () => {
     handleCloseUserMenu()
     User.logout()
-    setSuccessMessage('Successfully logged out!')
   }
 
   const handleOpenRegister = () => {
@@ -50,7 +48,6 @@ function UserAvatar() {
 
   const handleRegisterSuccessful = () => {
     handleCloseRegister()
-    setSuccessMessage('Successfully registered!')
   }
 
   useEffect(() => {
@@ -61,14 +58,6 @@ function UserAvatar() {
   if (!User.user) {
     return (
       <Box sx={{flexGrow: 0}}>
-        <Snackbar
-          open={successMessage.length > 0}
-          autoHideDuration={5000}
-          onClose={() => setSuccessMessage('')}
-          onClick={() => setSuccessMessage('')}
-          message={successMessage}
-        />
-
         <Dialog
           open={showRegDialog}
           onClose={handleCloseRegister}
@@ -112,7 +101,7 @@ function UserAvatar() {
           open={Boolean(anchorElUser)}
           onClose={handleCloseUserMenu}
         >
-          <LoginPage onSuccess={() => setSuccessMessage('Successfully logged in!')} />
+          <LoginPage />
           <Button sx={{ml: 1}} onClick={handleOpenRegister}>
             Create an account
           </Button>

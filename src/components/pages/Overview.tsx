@@ -1,6 +1,6 @@
-import {useUser} from "../../contexts/UserContext.tsx";
 import {Button, Grid2} from "@mui/material";
 import CreateHousehold from "../CreateHousehold.tsx";
+import {useUser} from "../../hooks/useUser.tsx";
 
 function Overview() {
   const User = useUser()

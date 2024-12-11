@@ -1,6 +1,6 @@
 import {TextField, Button, Box, Typography} from '@mui/material';
-import {useUser} from "../../contexts/UserContext.tsx";
 import {useState} from "react";
+import {useUser} from "../../hooks/useUser.tsx";
 
 interface formProps {
   email: string,

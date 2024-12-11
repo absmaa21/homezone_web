@@ -5,37 +5,23 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle, IconButton,
-  Snackbar,
+  DialogTitle,
   TextField
 } from "@mui/material";
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import {useToast} from "../hooks/useToast.tsx";
 
 function CreateHousehold() {
+  const Toast = useToast()
+
   const [open, setOpen] = useState(false)
-  const [household, setHousehold] = useState<Household>({name: ''})
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
 
   function createHousehold(name: string) {
-    setHousehold({name})
-    setSnackbarOpen(true)
+    Toast.push(`Household ${name} created!`)
     // TODO
   }
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={() => setSnackbarOpen(false)}
-        message={`Household ${household.name} created!`}
-        action={
-          <IconButton onClick={() => setSnackbarOpen(false)}>
-            <CloseRoundedIcon color={'error'} />
-          </IconButton>
-        }
-      />
-
       <Button onClick={() => setOpen(true)}>
         Create Household
       </Button>

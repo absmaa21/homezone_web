@@ -7,7 +7,6 @@ import Header from "./components/Header.tsx";
 import {Grid2} from "@mui/material";
 
 function App() {
-
   return (
     <Grid2>
       <Header/>

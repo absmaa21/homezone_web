@@ -1,6 +1,6 @@
 import { TextField, Button, Box } from '@mui/material';
-import {useUser} from "../../contexts/UserContext.tsx";
 import {useState} from "react";
+import {useUser} from "../../hooks/useUser.tsx";
 
 interface formProp {
   uname: string,
