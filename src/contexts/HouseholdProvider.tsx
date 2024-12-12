@@ -2,7 +2,7 @@ import {ReactNode, useState} from "react";
 import { HouseholdContext } from "./Contexts";
 import {useToast} from "../hooks/useToast.tsx";
 import {base_url, env, Environment} from "../../env.ts";
-import {CreateHouseholdResponse, Household} from "../models/Household";
+import {CreateHouseholdResponse, Household, JoinHouseholdResponse} from "../models/Household";
 import {useUser} from "../hooks/useUser.tsx";
 
 function HouseholdProvider({children}: {children: ReactNode}) {
@@ -19,7 +19,32 @@ function HouseholdProvider({children}: {children: ReactNode}) {
       return
     }
 
-    // TODO
+    if (code.length < 6) {
+      Toast.push('Code is not in a valid format!')
+      return
+    }
+
+    const r = await fetch(`${base_url}/home/${code}/join`, {
+      method: 'POST',
+      headers: User.getHeaderWithTokens(),
+    })
+
+    if (!r.ok) {
+      Toast.push('Something went wrong joining the household.', 'error')
+      throw new Error('Error joining household: ' + r.status)
+    }
+
+    const body: JoinHouseholdResponse = await r.json()
+    setHouseholds(p => [
+      ...p,
+      {
+        ...body,
+        created_at: Date.parse(body.created_at),
+        updated_at: Date.parse(body.updated_at),
+      }
+    ])
+    console.log('Household joined: ' + JSON.stringify(body))
+    Toast.push('Joined Household ' + body.name)
   }
 
 

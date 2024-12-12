@@ -6,17 +6,22 @@ import {BrowserRouter} from "react-router-dom";
 import {UserProvider} from "./contexts/UserProvider.tsx";
 import ToastProvider from "./contexts/ToastProvider.tsx";
 import HouseholdProvider from "./contexts/HouseholdProvider.tsx";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+
+const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <ToastProvider>
-        <UserProvider>
-          <HouseholdProvider>
-            <App/>
-          </HouseholdProvider>
-        </UserProvider>
-      </ToastProvider>
+      <QueryClientProvider client={queryClient}>
+        <ToastProvider>
+          <UserProvider>
+            <HouseholdProvider>
+              <App/>
+            </HouseholdProvider>
+          </UserProvider>
+        </ToastProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>,
 )
