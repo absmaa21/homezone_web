@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.10",
     "@mui/material": "^6.1.10",
+    "@tanstack/react-query": "^5.62.7",
     "@types/pako": "^2.0.3",
     "atop": "^0.0.11",
     "pako": "^2.1.0",

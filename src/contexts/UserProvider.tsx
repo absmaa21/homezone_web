@@ -196,11 +196,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const r = await fetch(`${base_url}/user/refresh`, {
       method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + user.access_token,
-        'X-Refresh-Token': user.refresh_token,
-      }
+      headers: getHeaderWithTokens()
     })
 
     if (!r.ok) {
@@ -231,11 +227,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const r = await fetch(`${base_url}/user/logout`, {
       method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: "Bearer " + user.access_token,
-        'X-Refresh-Token': user.refresh_token,
-      },
+      headers: getHeaderWithTokens(),
     })
 
     if (r.status !== 200) {
@@ -247,9 +239,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     Toast.push('Logout was successful.')
   };
 
+  function getHeaderWithTokens(): HeadersInit {
+    if (!user) {
+      throw new Error('Cannot get header without valid user')
+    }
+
+    return {
+      'Content-Type': 'application/json',
+      Authorization: "Bearer " + user.access_token,
+      'X-Refresh-Token': user.refresh_token,
+    }
+  }
+
   return (
     <UserContext.Provider
-      value={{user, register, login, refreshToken, logout, checkTokenValidation}}
+      value={{user, register, login, refreshToken, logout, checkTokenValidation, getHeaderWithTokens}}
     >
       {children}
     </UserContext.Provider>
