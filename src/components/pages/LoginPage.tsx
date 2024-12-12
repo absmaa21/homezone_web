@@ -14,11 +14,7 @@ const LoginPage = ({onSuccess}: {onSuccess?: () => void}) => {
 
   const handleLogin = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    User.login(form.email, form.password).then(r => {
-      if (r.length > 0) {
-        // TODO handle Error
-      } else if (onSuccess) onSuccess()
-    })
+    User.login(form.email, form.password).then(onSuccess)
   };
 
   return (

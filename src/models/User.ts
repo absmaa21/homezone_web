@@ -5,7 +5,7 @@ export interface User {
   access_token: string,
   refresh_token: string,
   created_at: number,
-  updated_at: number,
+  updated_at?: number,
 }
 
 // Fetches
@@ -14,19 +14,20 @@ export interface RegisterEndpointResponse {
   name: string,
   email: string,
   created_at: string,
+  updated_at: string,
 }
 
 export interface LoginEndpointResponse {
-  access_token: string,
-  refresh_token: string,
+  accessToken: string,
+  refreshToken: string,
 }
 
 export interface InfoEndpointResponse {
   id: string,
-  name: string,
   email: string,
-  updated_at: string,
-  created_at: string,
+  username: string,
+  createdAt: string,
+  updatedAt: string,
 }
 
 export type RefreshEndpointResponse = LoginEndpointResponse

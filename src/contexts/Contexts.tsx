@@ -1,5 +1,5 @@
 import {createContext} from "react";
-import {User} from "../models/User.ts";
+import {RefreshEndpointResponse, User} from "../models/User.ts";
 import {Message} from "./ToastProvider.tsx";
 
 
@@ -7,9 +7,9 @@ export interface UserContextProps {
   user: User | null;
   register: (uname: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  refreshToken: () => void;
+  refreshToken: () => Promise<RefreshEndpointResponse | null>;
   logout: () => void;
-  invalidateToken: () => void;
+  checkTokenValidation: () => Promise<boolean>;
 }
 export const UserContext = createContext<UserContextProps | undefined>(undefined);
 
