@@ -8,17 +8,12 @@ import {
   DialogTitle,
   TextField
 } from "@mui/material";
-import {useToast} from "../hooks/useToast.tsx";
+import {useHousehold} from "../hooks/useHousehold.tsx";
 
 function CreateHousehold() {
-  const Toast = useToast()
+  const Household = useHousehold()
 
   const [open, setOpen] = useState(false)
-
-  function createHousehold(name: string) {
-    Toast.push(`Household ${name} created!`)
-    // TODO
-  }
 
   return (
     <>
@@ -35,7 +30,7 @@ function CreateHousehold() {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
-            createHousehold(formJson.name as string)
+            Household.create(formJson.name as string)
             setOpen(false);
           },
         }}

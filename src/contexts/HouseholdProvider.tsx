@@ -1,37 +1,63 @@
 import {ReactNode, useState} from "react";
 import { HouseholdContext } from "./Contexts";
 import {useToast} from "../hooks/useToast.tsx";
-import {env, Environment} from "../../env.ts";
+import {base_url, env, Environment} from "../../env.ts";
+import {CreateHouseholdResponse, Household} from "../models/Household";
+import {useUser} from "../hooks/useUser.tsx";
 
 function HouseholdProvider({children}: {children: ReactNode}) {
-
   const Toast = useToast()
+  const User = useUser()
 
-  const [household, setHousehold] = useState<Household | null>(null)
+  const [households, setHouseholds] = useState<Household[]>([])
+
 
   const join = async (code: string) => {
     if (env === Environment.FRONTEND) {
       Toast.push('Env is Frontend. Skipping join.')
-      setHousehold({name: 'Absi\'s household', joinCode: code})
+      setHouseholds([{name: 'Test household', created_at: Date.now(), updated_at: Date.now(), id: '123', joinCode: code}])
       return
     }
 
     // TODO
   }
 
-  const create = async (): Promise<void> => {
+
+  const create = async (name: string): Promise<void> => {
     if (env === Environment.FRONTEND) {
       Toast.push('Env is Frontend. Skipping create.')
       await join('a1b2c3')
       return
     }
 
-    // TODO
+    const r = await fetch(`${base_url}/home/`, {
+      method: 'POST',
+      headers: User.getHeaderWithTokens(),
+      body: JSON.stringify({name})
+    })
+
+    if (!r.ok) {
+      Toast.push('Something went wrong creating the household.', 'error')
+      throw new Error('Error creating household: ' + r.status)
+    }
+
+    const body: CreateHouseholdResponse = await r.json()
+    setHouseholds(p => [
+      ...p,
+      {
+        ...body,
+        created_at: Date.parse(body.created_at),
+        updated_at: Date.parse(body.updated_at),
+      }
+    ])
+    console.log('Household created: ' + JSON.stringify(body))
+    Toast.push('Created household ' + name)
   }
+
 
   return (
     <HouseholdContext.Provider
-      value={{household, join, create}}
+      value={{households, join, create}}
     >
       {children}
     </HouseholdContext.Provider>

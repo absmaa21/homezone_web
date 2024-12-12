@@ -1,6 +1,7 @@
 import {createContext} from "react";
 import {RefreshEndpointResponse, User} from "../models/User.ts";
 import {Message} from "./ToastProvider.tsx";
+import {Household} from "../models/Household";
 
 
 export interface UserContextProps {
@@ -24,8 +25,8 @@ export const ToastContext = createContext<ToastContextProps | undefined>(undefin
 
 
 export interface HouseholdContextProps {
-  household: Household | null,
+  households: Household[],
   join: (code: string) => Promise<void>,
-  create: () => Promise<void>,
+  create: (name: string) => Promise<void>,
 }
 export const HouseholdContext = createContext<HouseholdContextProps | undefined>(undefined)
