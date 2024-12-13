@@ -1,6 +1,6 @@
 import { TextField, Button, Box } from '@mui/material';
 import {useState} from "react";
-import {useUser} from "../../hooks/useUser.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 interface formProp {
   uname: string,
@@ -10,7 +10,7 @@ interface formProp {
 }
 
 const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
-  const User = useUser()
+  const User = useAuth()
   const [form, setForm] = useState<formProp>({uname: '', email: '', password: '', conPassword: ''})
 
   const handleRegister = (e: { preventDefault: () => void; }) => {

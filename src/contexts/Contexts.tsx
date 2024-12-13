@@ -4,7 +4,7 @@ import {Message} from "./ToastProvider.tsx";
 import {Household} from "../models/Household";
 
 
-export interface UserContextProps {
+export interface AuthContextProps {
   user: User | null;
   register: (uname: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
@@ -13,7 +13,7 @@ export interface UserContextProps {
   checkTokenValidation: () => Promise<boolean>;
   getHeadersWithTokens: () => HeadersInit;
 }
-export const UserContext = createContext<UserContextProps | undefined>(undefined);
+export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 
 export interface ToastContextProps {

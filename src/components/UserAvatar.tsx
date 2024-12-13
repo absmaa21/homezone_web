@@ -15,10 +15,10 @@ import React, {useEffect, useState} from "react";
 import LoginIcon from '@mui/icons-material/Login';
 import LoginPage from "./pages/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
-import {useUser} from "../hooks/useUser.tsx";
+import {useAuth} from "../hooks/useAuth.tsx";
 
 function UserAvatar() {
-  const User = useUser()
+  const User = useAuth()
   const Theme = useTheme()
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);

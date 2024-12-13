@@ -3,7 +3,7 @@ import {createRoot} from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import {BrowserRouter} from "react-router-dom";
-import {UserProvider} from "./contexts/UserProvider.tsx";
+import {AuthProvider} from "./contexts/AuthProvider.tsx";
 import ToastProvider from "./contexts/ToastProvider.tsx";
 import HouseholdProvider from "./contexts/HouseholdProvider.tsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
@@ -15,11 +15,11 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          <UserProvider>
+          <AuthProvider>
             <HouseholdProvider>
               <App/>
             </HouseholdProvider>
-          </UserProvider>
+          </AuthProvider>
         </ToastProvider>
       </QueryClientProvider>
     </BrowserRouter>

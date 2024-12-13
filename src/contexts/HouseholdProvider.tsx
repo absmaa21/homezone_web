@@ -3,11 +3,11 @@ import { HouseholdContext } from "./Contexts";
 import {useToast} from "../hooks/useToast.tsx";
 import {base_url, env, Environment} from "../../env.ts";
 import {CreateHouseholdResponse, Household, JoinHouseholdResponse} from "../models/Household";
-import {useUser} from "../hooks/useUser.tsx";
+import {useAuth} from "../hooks/useAuth.tsx";
 
 function HouseholdProvider({children}: {children: ReactNode}) {
   const Toast = useToast()
-  const User = useUser()
+  const User = useAuth()
 
   const [households, setHouseholds] = useState<Household[]>([])
 

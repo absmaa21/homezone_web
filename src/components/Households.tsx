@@ -1,5 +1,5 @@
 import {useToast} from "../hooks/useToast.tsx";
-import {useUser} from "../hooks/useUser.tsx";
+import {useAuth} from "../hooks/useAuth.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {base_url} from "../../env.ts";
 import {AllHouseholdsResponse} from "../models/Household";
@@ -11,7 +11,7 @@ import {useHousehold} from "../hooks/useHousehold.tsx";
 function Households() {
   const Toast = useToast()
   const Household = useHousehold()
-  const User = useUser()
+  const User = useAuth()
 
   const Houses = useQuery<AllHouseholdsResponse>({
     queryKey: ['houses', User.user?.id],

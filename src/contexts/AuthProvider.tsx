@@ -7,11 +7,11 @@ import {
 } from "../models/User.ts";
 import {base_url, env, Environment} from "../../env.ts";
 import {Storage} from "../utils/Storage.ts";
-import {UserContext} from "./Contexts.tsx";
+import {AuthContext} from "./Contexts.tsx";
 import {useToast} from "../hooks/useToast.tsx";
 import StatusResponseHandling from "../utils/StatusResponseHandling.ts";
 
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const Toast = useToast();
   const [user, setUser] = useState<User | null>(null);
 
@@ -20,7 +20,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (user) {
@@ -29,10 +29,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
   }, [user]);
 
-  const validateToken = async () => {
-    if (!(await checkTokenValidation())) expireUser();
-    else await getInfo();
-  };
+  const validateToken = () => {
+    checkTokenValidation().then(r => r ? getInfo() : expireUser())
+  }
 
   const isTokenExpired = (token: string): boolean => {
     try {
@@ -41,7 +40,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     } catch {
       return true;
     }
-  };
+  }
 
   const checkTokenValidation = async (): Promise<boolean> => {
     if (env === Environment.FRONTEND) return true;
@@ -57,13 +56,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
 
     return true;
-  };
+  }
 
   const expireUser = () => {
     Toast.push("User expired! Please login.");
     setUser(null);
     Storage.remove("user");
-  };
+  }
 
   const getInfo = async () => {
     if (!user) return;
@@ -77,7 +76,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const data: InfoEndpointResponse = await response.json();
     setUser((prev) => prev && {...prev, ...data});
-  };
+  }
 
   const register = async (username: string, email: string, password: string) => {
     if (env === Environment.FRONTEND) {
@@ -93,7 +92,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const handledResponse = StatusResponseHandling.register(response);
     Toast.push(handledResponse.msg, handledResponse.type);
-  };
+  }
 
   const login = async (email: string, password: string) => {
     if (env === Environment.FRONTEND) {
@@ -114,7 +113,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({email, password}),
-    });
+    })
 
     const handledResponse = StatusResponseHandling.login(response);
     if (!handledResponse.ok) {
@@ -130,10 +129,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       access_token: accessToken,
       refresh_token: refreshToken,
       created_at: -1,
-    });
+    })
 
     Toast.push(handledResponse.msg);
-  };
+  }
 
   const refreshToken = async (): Promise<RefreshEndpointResponse | null> => {
     if (env === Environment.FRONTEND) {
@@ -150,7 +149,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const data: RefreshEndpointResponse = await response.json();
     setUser((prev) => prev && {...prev, ...data});
     return data;
-  };
+  }
 
   const logout = async () => {
     setUser(null);
@@ -164,7 +163,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
 
     Toast.push("Logout was successful.");
-  };
+  }
 
   const getHeadersWithTokens = (): HeadersInit => {
     if (!user) throw new Error("User is not logged in");
@@ -173,11 +172,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       "Content-Type": "application/json",
       Authorization: `Bearer ${user.access_token}`,
       "X-Refresh-Token": user.refresh_token,
-    };
-  };
+    }
+  }
 
   return (
-    <UserContext.Provider
+    <AuthContext.Provider
       value={{
         user,
         register,
@@ -189,6 +188,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       }}
     >
       {children}
-    </UserContext.Provider>
-  );
-};
+    </AuthContext.Provider>
+  )
+}
