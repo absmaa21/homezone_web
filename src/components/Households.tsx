@@ -17,7 +17,7 @@ function Households() {
     queryKey: ['houses', User.user?.id],
     queryFn: async () => {
       await User.checkTokenValidation()
-      const r = await fetch(`${base_url}/user/homes`, {headers: User.getHeaderWithTokens()})
+      const r = await fetch(`${base_url}/user/homes`, {headers: User.getHeadersWithTokens()})
       if (!r.ok) throw new Error('Something went wrong fetching homes: ' + r.status)
       return await r.json()
     },

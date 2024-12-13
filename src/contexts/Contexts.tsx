@@ -11,7 +11,7 @@ export interface UserContextProps {
   refreshToken: () => Promise<RefreshEndpointResponse | null>;
   logout: () => void;
   checkTokenValidation: () => Promise<boolean>;
-  getHeaderWithTokens: () => HeadersInit;
+  getHeadersWithTokens: () => HeadersInit;
 }
 export const UserContext = createContext<UserContextProps | undefined>(undefined);
 
