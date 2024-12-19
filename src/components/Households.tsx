@@ -28,7 +28,6 @@ function Households() {
   }, [Household.households]);
 
 
-
   return (
     <List>
       {Houses.isSuccess && Houses.data.length <= 0 && <h3>You are not in any household.</h3>}

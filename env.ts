@@ -12,6 +12,6 @@ export enum Loglevel {
 }
 
 
-export const ip_address: string = "10.151.6.225:3001"
+export const ip_address: string = "10.151.6.132:3000"
 export const base_url: string = "http://" + ip_address + "/v1"
 export const env: Environment = Environment.BUILD

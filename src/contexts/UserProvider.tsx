@@ -18,19 +18,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
   useEffect(() => {
     const storedUser = Storage.load("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser)
+      setUser(parsedUser);
+      validateToken(parsedUser)
     }
   }, []);
 
   useEffect(() => {
     if (user) {
-      Storage.save("user", user);
-      validateToken();
+      Storage.save('user', user)
     }
   }, [user]);
 
-  const validateToken = async () => {
-    if (!(await checkTokenValidation())) expireUser();
+  const validateToken = async (parsedUser?: User) => {
+    if (!(await checkTokenValidation(parsedUser))) expireUser();
     else await getInfo();
   };
 
@@ -43,16 +44,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
   };
 
-  const checkTokenValidation = async (): Promise<boolean> => {
+  const checkTokenValidation = async (parsedUser?: User): Promise<boolean> => {
     if (env === Environment.FRONTEND) return true;
-    if (!user) return false;
+    if (user) parsedUser = user
+    if (!parsedUser) return false
 
-    if (!user.refresh_token || isTokenExpired(user.refresh_token)) {
+    if (!parsedUser.refresh_token || isTokenExpired(parsedUser.refresh_token)) {
+      console.log('refresh token expired!')
       expireUser();
       return false;
     }
 
-    if (!user.access_token || isTokenExpired(user.access_token)) {
+    if (!parsedUser.access_token || isTokenExpired(parsedUser.access_token)) {
+      console.log('access token expired!')
       return !!(await refreshToken());
     }
 
@@ -76,7 +80,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
     if (!response.ok) return;
 
     const data: InfoEndpointResponse = await response.json();
-    setUser((prev) => prev && {...prev, ...data});
+    setUser((prev) => prev && {
+      ...prev,
+      created_at: Date.parse(data.createdAt),
+      updated_at: Date.parse(data.updatedAt),
+      ...data,
+    });
   };
 
   const register = async (username: string, email: string, password: string) => {

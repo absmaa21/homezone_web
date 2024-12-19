@@ -14,7 +14,7 @@ export default abstract class StatusResponseHandling {
           msg: 'Invalid or missing body!',
           type: 'error',
         }
-      case 401 | 204:
+      case 401:
         return {
           msg: 'Invalid credentials!',
           type: 'info'
@@ -67,7 +67,7 @@ export default abstract class StatusResponseHandling {
     }
 
     return {
-      msg: 'Something went wrong! Try again.',
+      msg: 'Something went wrong! Try again.' + response.status,
       type: 'error'
     }
   }

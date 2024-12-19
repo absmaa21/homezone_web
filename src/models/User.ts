@@ -11,7 +11,7 @@ export interface User {
 // Fetches
 export interface RegisterEndpointResponse {
   id: string,
-  name: string,
+  username: string,
   email: string,
   created_at: string,
   updated_at: string,
@@ -24,8 +24,8 @@ export interface LoginEndpointResponse {
 
 export interface InfoEndpointResponse {
   id: string,
-  email: string,
   username: string,
+  email: string,
   createdAt: string,
   updatedAt: string,
 }

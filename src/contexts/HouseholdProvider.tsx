@@ -26,7 +26,7 @@ function HouseholdProvider({children}: {children: ReactNode}) {
 
     const r = await fetch(`${base_url}/home/${code}/join`, {
       method: 'POST',
-      headers: User.getHeaderWithTokens(),
+      headers: User.getHeadersWithTokens(),
     })
 
     if (!r.ok) {
@@ -57,7 +57,7 @@ function HouseholdProvider({children}: {children: ReactNode}) {
 
     const r = await fetch(`${base_url}/home/`, {
       method: 'POST',
-      headers: User.getHeaderWithTokens(),
+      headers: User.getHeadersWithTokens(),
       body: JSON.stringify({name})
     })
 
