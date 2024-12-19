@@ -7,11 +7,11 @@ import {
 } from "../models/User.ts";
 import {base_url, env, Environment} from "../../env.ts";
 import {Storage} from "../utils/Storage.ts";
-import {UserContext} from "./Contexts.tsx";
+import {AuthContext} from "./Contexts.tsx";
 import {useToast} from "../hooks/useToast.tsx";
 import StatusResponseHandling from "../utils/StatusResponseHandling.ts";
 
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const Toast = useToast();
   const [user, setUser] = useState<User | null>(null);
 
@@ -186,7 +186,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
   };
 
   return (
-    <UserContext.Provider
+    <AuthContext.Provider
       value={{
         user,
         register,
@@ -198,6 +198,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
       }}
     >
       {children}
-    </UserContext.Provider>
+    </AuthContext.Provider>
   );
 };

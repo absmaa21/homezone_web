@@ -1,4 +1,3 @@
-import {useToast} from "../hooks/useToast.tsx";
 import {useAuth} from "../hooks/useAuth.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {base_url} from "../../env.ts";
@@ -9,7 +8,6 @@ import {useHousehold} from "../hooks/useHousehold.tsx";
 
 
 function Households() {
-  const Toast = useToast()
   const Household = useHousehold()
   const User = useAuth()
 
@@ -24,7 +22,7 @@ function Households() {
   })
 
   useEffect(() => {
-    Houses.refetch().then(() => Toast.push('Households reloaded.'))
+    Houses.refetch()
   }, [Household.households]);
 
 
