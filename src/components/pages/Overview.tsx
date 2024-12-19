@@ -3,6 +3,7 @@ import CreateHousehold from "../CreateHousehold.tsx";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import JoinHousehold from "../JoinHousehold.tsx";
 import Households from "../Households.tsx";
+import Tasks from "../Tasks.tsx";
 
 function Overview() {
   const User = useAuth()
@@ -20,6 +21,10 @@ function Overview() {
       <hr/>
 
       <Households/>
+
+      <hr/>
+
+      <Tasks/>
     </Grid2>
   );
 }
