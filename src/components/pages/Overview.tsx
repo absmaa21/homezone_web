@@ -1,11 +1,11 @@
 import {Grid2} from "@mui/material";
 import CreateHousehold from "../CreateHousehold.tsx";
-import {useUser} from "../../hooks/useUser.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
 import JoinHousehold from "../JoinHousehold.tsx";
 import Households from "../Households.tsx";
 
 function Overview() {
-  const User = useUser()
+  const User = useAuth()
 
   return (
     <Grid2>
