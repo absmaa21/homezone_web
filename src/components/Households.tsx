@@ -5,6 +5,7 @@ import {AllHouseholdsResponse} from "../models/Household";
 import {List, ListItem} from "@mui/material";
 import {useEffect} from "react";
 import {useHousehold} from "../hooks/useHousehold.tsx";
+import {Log} from "../utils/Logging.ts";
 
 
 function Households() {
@@ -22,7 +23,7 @@ function Households() {
   })
 
   useEffect(() => {
-    Houses.refetch()
+    Houses.refetch().then(() => Log.debug('Fetched all households'))
   }, [Household.households]);
 
 

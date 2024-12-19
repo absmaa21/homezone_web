@@ -10,6 +10,7 @@ import {Storage} from "../utils/Storage.ts";
 import {AuthContext} from "./Contexts.tsx";
 import {useToast} from "../hooks/useToast.tsx";
 import StatusResponseHandling from "../utils/StatusResponseHandling.ts";
+import {Log} from "../utils/Logging.ts";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const Toast = useToast();
@@ -50,13 +51,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     if (!parsedUser) return false
 
     if (!parsedUser.refresh_token || isTokenExpired(parsedUser.refresh_token)) {
-      console.log('refresh token expired!')
+      Log.info('refresh token expired!')
       expireUser();
       return false;
     }
 
     if (!parsedUser.access_token || isTokenExpired(parsedUser.access_token)) {
-      console.log('access token expired!')
+      Log.info('access token expired!')
       return !!(await refreshToken());
     }
 

@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import {useToast} from "../hooks/useToast.tsx";
 import {useHousehold} from "../hooks/useHousehold.tsx";
+import {Log} from "../utils/Logging.ts";
 
 function JoinHousehold() {
   const Toast = useToast()
@@ -17,6 +18,7 @@ function JoinHousehold() {
   const [open, setOpen] = useState(false)
 
   function joinHousehold(name: string) {
+    Log.debug('Household joined with code ' + name)
     Household.join(name).then(() => Toast.push(`Household with code ${name} joined!`))
     // TODO
   }

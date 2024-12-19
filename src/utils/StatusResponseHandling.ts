@@ -58,7 +58,7 @@ export default abstract class StatusResponseHandling {
           msg: 'Internal Server error! Try again.',
           type: 'error',
         }
-      case 201 | 200:
+      case 200:
         return {
           msg: 'Register was successful!',
           type: 'info',

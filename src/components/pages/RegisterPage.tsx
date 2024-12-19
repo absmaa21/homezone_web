@@ -1,6 +1,7 @@
 import { TextField, Button, Box } from '@mui/material';
 import {useState} from "react";
 import {useAuth} from "../../hooks/useAuth.tsx";
+import {Log} from "../../utils/Logging.ts";
 
 interface formProp {
   uname: string,
@@ -16,17 +17,10 @@ const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
   const handleRegister = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     if (form.password !== form.conPassword) {
-      console.log("Passwords do not match!")
+      Log.info("Passwords do not match!")
       return
     }
-    User.register(form.uname, form.email, form.password).then(r => {
-      if(!r) {
-        if (onSuccess) onSuccess()
-        return
-      }
-
-      // TODO error handling
-    })
+    User.register(form.uname, form.email, form.password).then(onSuccess)
   };
 
   return (

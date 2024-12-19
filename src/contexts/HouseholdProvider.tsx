@@ -4,6 +4,7 @@ import {useToast} from "../hooks/useToast.tsx";
 import {base_url, env, Environment} from "../../env.ts";
 import {CreateHouseholdResponse, Household, JoinHouseholdResponse} from "../models/Household";
 import {useAuth} from "../hooks/useAuth.tsx";
+import { Log } from "../utils/Logging.ts";
 
 function HouseholdProvider({children}: {children: ReactNode}) {
   const Toast = useToast()
@@ -43,7 +44,7 @@ function HouseholdProvider({children}: {children: ReactNode}) {
         updated_at: Date.parse(body.updated_at),
       }
     ])
-    console.log('Household joined: ' + JSON.stringify(body))
+    Log.info('Household joined: ' + JSON.stringify(body))
     Toast.push('Joined Household ' + body.name)
   }
 
@@ -75,7 +76,7 @@ function HouseholdProvider({children}: {children: ReactNode}) {
         updated_at: Date.parse(body.updated_at),
       }
     ])
-    console.log('Household created: ' + JSON.stringify(body))
+    Log.info('Household created: ' + JSON.stringify(body))
     Toast.push('Created household ' + name)
   }
 

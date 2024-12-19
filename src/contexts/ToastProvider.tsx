@@ -1,6 +1,7 @@
 import { ToastContext } from "./Contexts";
 import {ReactNode, useEffect, useState} from "react";
 import {Snackbar} from "@mui/material";
+import {Log} from "../utils/Logging.ts";
 
 export interface Message {
   type: MessageType,
@@ -18,7 +19,7 @@ function ToastProvider({children}: {children: ReactNode}) {
   }
 
   const clear = () => {
-    console.log('Cleared messages')
+    Log.info('Cleared messages')
     if (Date.now() - lastPushTime > 5000) setShow(false)
   }
 

@@ -1,7 +1,9 @@
+import {Log} from "./Logging.ts";
+
 export abstract class Storage {
 
   public static save(key: string, value: object | string): void {
-    console.log('Saving using ' + key)
+    Log.info('Saving using ' + key)
     if (typeof value !== "string") {
       value = JSON.stringify(value)
     }
