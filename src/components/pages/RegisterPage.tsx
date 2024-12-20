@@ -1,27 +1,46 @@
-import { TextField, Button, Box } from '@mui/material';
-import {useState} from "react";
+import {TextField, Button, Box, Typography} from '@mui/material';
+import React, {useEffect, useState} from "react";
 import {useAuth} from "../../hooks/useAuth.tsx";
-import {Log} from "../../utils/Logging.ts";
-
-interface formProp {
-  uname: string,
-  email: string,
-  password: string,
-  conPassword: string,
-}
 
 const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
   const User = useAuth()
-  const [form, setForm] = useState<formProp>({uname: '', email: '', password: '', conPassword: ''})
 
-  const handleRegister = (e: { preventDefault: () => void; }) => {
+  const [errors, setErrors] = useState({username: '', email: '', password: '', conPassword: ''})
+
+  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (form.password !== form.conPassword) {
-      Log.info("Passwords do not match!")
+    const formData = new FormData(e.currentTarget)
+
+    const username = formData.get('username') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const conPassword = formData.get('conPassword') as string
+
+    if (password !== conPassword) {
+      setErrors(p => ({...p, conPassword: 'Passwords do not match!'}))
       return
     }
-    User.register(form.uname, form.email, form.password).then(onSuccess)
+
+    if (password.length < 8) {
+      setErrors(p => ({...p, password: 'Password length must be 8 or greater!'}))
+      return
+    }
+
+    User.register(username, email, password).then(err => {
+      if (err) {
+        if (err.toLowerCase().includes("email")) setErrors(p => ({...p, email: err}))
+        else setErrors({username: ' ', email: ' ', password: ' ', conPassword: err})
+      }
+      else if (onSuccess) onSuccess()
+    })
   };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setErrors({username: '', email: '', password: '', conPassword: ''})
+    }, 3000)
+    return () => clearTimeout(timeout)
+  }, [errors]);
 
   return (
     <Box
@@ -30,24 +49,29 @@ const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
       alignItems="center"
       justifyContent="center"
     >
+      <Typography variant="h4" gutterBottom>
+        Register
+      </Typography>
       <form onSubmit={handleRegister} style={{ width: '100%' }}>
         <TextField
           fullWidth
           label="Username"
           variant="outlined"
           margin="normal"
+          name="username"
           required
-          value={form.uname}
-          onChange={e => setForm(p => ({...p, uname: e.target.value}))}
+          error={!!errors.username}
+          helperText={errors.username}
         />
         <TextField
           fullWidth
           label="Email"
           variant="outlined"
           margin="normal"
+          name="email"
           required
-          value={form.email}
-          onChange={e => setForm(p => ({...p, email: e.target.value}))}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         <TextField
           fullWidth
@@ -55,9 +79,10 @@ const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
           variant="outlined"
           margin="normal"
           type="password"
+          name="password"
           required
-          value={form.password}
-          onChange={e => setForm(p => ({...p, password: e.target.value}))}
+          error={!!errors.password}
+          helperText={errors.password}
         />
         <TextField
           fullWidth
@@ -65,9 +90,10 @@ const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
           variant="outlined"
           margin="normal"
           type="password"
+          name="conPassword"
           required
-          value={form.conPassword}
-          onChange={e => setForm(p => ({...p, conPassword: e.target.value}))}
+          error={!!errors.conPassword}
+          helperText={errors.conPassword}
         />
         <Button
           type="submit"

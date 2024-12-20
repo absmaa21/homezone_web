@@ -77,38 +77,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
   };
 
   const getInfo = async () => {
-    if (!user) return;
+    if (!user) return
 
     const response = await fetch(`${base_url}/user/`, {
       method: "GET",
       headers: getHeadersWithTokens(),
-    });
+    })
 
-    if (!response.ok) return;
+    if (!response.ok) return
 
-    const data: InfoEndpointResponse = await response.json();
+    const data: InfoEndpointResponse = await response.json()
     setUser((prev) => prev && {
       ...prev,
       created_at: Date.parse(data.createdAt),
       updated_at: Date.parse(data.updatedAt),
       ...data,
-    });
-  };
+    })
+  }
 
   const register = async (username: string, email: string, password: string) => {
     if (env === Environment.FRONTEND) {
-      Toast.push("ENV is Frontend. Skipping register.");
-      return;
+      Toast.push("ENV is Frontend. Skipping register.")
+      return
     }
 
     const response = await fetch(`${base_url}/user/register`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({username, email, password}),
-    });
+    })
 
-    const handledResponse = StatusResponseHandling.register(response);
-    Toast.push(handledResponse.msg, handledResponse.type);
+    const handledResponse = StatusResponseHandling.register(response)
+    if (!handledResponse.ok) {
+      Toast.push(handledResponse.msg, handledResponse.type)
+      return handledResponse.msg
+    }
+
+    Toast.push(handledResponse.msg)
+    return
   };
 
   const login = async (email: string, password: string) => {
