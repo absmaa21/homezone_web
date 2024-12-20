@@ -1,10 +1,10 @@
 import {ReactNode, useState} from "react";
-import { HouseholdContext } from "./Contexts";
+import {HouseholdContext} from "./Contexts";
 import {useToast} from "../hooks/useToast.tsx";
 import {base_url, env, Environment} from "../../env.ts";
 import {CreateHouseholdResponse, Household, JoinHouseholdResponse} from "../models/Household";
 import {useAuth} from "../hooks/useAuth.tsx";
-import { Log } from "../utils/Logging.ts";
+import {Log} from "../utils/Logging.ts";
 
 function HouseholdProvider({children}: {children: ReactNode}) {
   const Toast = useToast()
@@ -81,9 +81,31 @@ function HouseholdProvider({children}: {children: ReactNode}) {
   }
 
 
+  const leave = async (id: string): Promise<void> => {
+    if (env === Environment.FRONTEND) {
+      Toast.push('Env is Frontend. Skipping leave.')
+      return
+    }
+
+    const r = await fetch(`${base_url}/user/homes/${id}/leave`, {
+      method: 'POST',
+      headers: User.getHeadersWithTokens(),
+    })
+
+    if (!r.ok) {
+      Toast.push('Something went wrong leaving the household.', 'error')
+      throw new Error('Error leaving household: ' + r.status)
+    }
+
+    setHouseholds(p => p.filter(x => x.id !== id))
+    Log.info('Household leaved: ' + id)
+    Toast.push('Leaved household!')
+  }
+
+
   return (
     <HouseholdContext.Provider
-      value={{households, join, create}}
+      value={{households, join, create, leave}}
     >
       {children}
     </HouseholdContext.Provider>

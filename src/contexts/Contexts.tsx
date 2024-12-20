@@ -28,5 +28,6 @@ export interface HouseholdContextProps {
   households: Household[],
   join: (code: string) => Promise<void>,
   create: (name: string) => Promise<void>,
+  leave: (id: string) => Promise<void>,
 }
 export const HouseholdContext = createContext<HouseholdContextProps | undefined>(undefined)
