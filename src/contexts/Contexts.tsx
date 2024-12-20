@@ -12,6 +12,7 @@ export interface AuthContextProps {
   logout: () => void;
   checkTokenValidation: () => Promise<boolean>;
   getHeadersWithTokens: () => HeadersInit;
+  changeAttribute: <K extends keyof User>(key: K, value: User[K]) => Promise<void>,
 }
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 

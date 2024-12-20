@@ -6,6 +6,7 @@ export interface User {
   refresh_token: string,
   created_at: number,
   updated_at?: number,
+  image?: string,
 }
 
 // Fetches
