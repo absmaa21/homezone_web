@@ -29,7 +29,6 @@ const RegisterPage = ({onSuccess}: {onSuccess?: () => void}) => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      sx={{ width: 400 }}
     >
       <form onSubmit={handleRegister} style={{ width: '100%' }}>
         <TextField
