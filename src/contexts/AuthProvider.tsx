@@ -123,22 +123,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         updated_at: Date.now(),
       });
       Toast.push("ENV is Frontend. Skipping login.");
-      return;
+      return
     }
 
     const response = await fetch(`${base_url}/user/login`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({email, password}),
-    });
+    })
 
-    const handledResponse = StatusResponseHandling.login(response);
+    const handledResponse = StatusResponseHandling.login(response)
     if (!handledResponse.ok) {
-      Toast.push(handledResponse.msg, handledResponse.type);
-      return;
+      Toast.push(handledResponse.msg, handledResponse.type)
+      return handledResponse.msg
     }
 
-    const {accessToken, refreshToken}: LoginEndpointResponse = await response.json();
+    const {accessToken, refreshToken}: LoginEndpointResponse = await response.json()
     setUser({
       id: "",
       username: "",
@@ -146,9 +146,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
       access_token: accessToken,
       refresh_token: refreshToken,
       created_at: -1,
-    });
+    })
 
-    Toast.push(handledResponse.msg);
+    Toast.push(handledResponse.msg)
   };
 
   const refreshToken = async (): Promise<RefreshEndpointResponse | null> => {

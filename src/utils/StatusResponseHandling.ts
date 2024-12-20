@@ -19,6 +19,11 @@ export default abstract class StatusResponseHandling {
           msg: 'Invalid credentials!',
           type: 'info'
         }
+      case 422:
+        return {
+          msg: 'Invalid format!',
+          type: 'error'
+        }
       case 200:
         return {
           msg: 'Login was successful!',

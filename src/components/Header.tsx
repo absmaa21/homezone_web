@@ -28,7 +28,6 @@ function Header() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* PLACE ICON HERE */}
           <Typography
             variant="h6"
             noWrap
@@ -82,8 +81,6 @@ function Header() {
           </Box>
 
           {/*MEDIUM DEVICES*/}
-
-          {/* PLACE ICON HERE */}
           <Typography
             variant="h5"
             noWrap

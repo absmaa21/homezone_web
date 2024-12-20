@@ -7,7 +7,7 @@ import {Household} from "../models/Household";
 export interface AuthContextProps {
   user: User | null;
   register: (uname: string, email: string, password: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<string | void>;
   refreshToken: () => Promise<RefreshEndpointResponse | null>;
   logout: () => void;
   checkTokenValidation: () => Promise<boolean>;

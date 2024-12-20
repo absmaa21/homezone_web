@@ -1,21 +1,20 @@
 import {TextField, Button, Box, Typography} from '@mui/material';
-import {useState} from "react";
 import {useAuth} from "../../hooks/useAuth.tsx";
+import React, {useState} from "react";
 
-interface formProps {
-  email: string,
-  password: string,
-}
+const LoginPage = ({onSuccess}: { onSuccess?: () => void }) => {
+  const Auth = useAuth()
 
-const LoginPage = ({onSuccess}: {onSuccess?: () => void}) => {
-  const User = useAuth()
+  const [error, setError] = useState<string | null>(null)
 
-  const [form, setForm] = useState<formProps>({email: '', password: ''})
-
-  const handleLogin = (e: { preventDefault: () => void; }) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    User.login(form.email, form.password).then(onSuccess)
-  };
+    const formData = new FormData(e.currentTarget)
+    Auth.login(formData.get('email') as string, formData.get('password') as string).then(err => {
+      if (err) setError(err)
+      else if (onSuccess) onSuccess()
+    })
+  }
 
   return (
     <Box
@@ -23,8 +22,9 @@ const LoginPage = ({onSuccess}: {onSuccess?: () => void}) => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      sx={{width: 400, margin: 'auto'}}
-      padding={1}
+      sx={{
+        padding: {sx: 0, md: 1}
+      }}
     >
       <Typography variant="h4" gutterBottom>
         Login
@@ -35,9 +35,9 @@ const LoginPage = ({onSuccess}: {onSuccess?: () => void}) => {
           label="Email"
           variant="filled"
           margin="normal"
+          name="email"
           required
-          value={form.email}
-          onChange={e => setForm(p => ({...p, email: e.target.value}))}
+          error={!!error}
         />
         <TextField
           fullWidth
@@ -45,9 +45,10 @@ const LoginPage = ({onSuccess}: {onSuccess?: () => void}) => {
           variant="filled"
           margin="normal"
           type="password"
+          name="password"
           required
-          value={form.password}
-          onChange={e => setForm(p => ({...p, password: e.target.value}))}
+          error={!!error}
+          helperText={error}
         />
         <Button
           type="submit"

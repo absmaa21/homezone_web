@@ -2,8 +2,8 @@ import {
   Avatar,
   Box,
   Button,
-  Dialog,
-  DialogContent, DialogTitle,
+  Dialog, DialogActions,
+  DialogContent,
   IconButton,
   Menu,
   MenuItem,
@@ -21,7 +21,7 @@ function UserAvatar() {
   const Theme = useTheme()
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [showRegDialog, setShowRegDialog] = useState(false)
+  const [showDialog, setShowDialog] = useState<'register' | 'login' | null>(null)
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -33,24 +33,25 @@ function UserAvatar() {
 
   const handleLogout = () => {
     handleCloseUserMenu()
+    setShowDialog(null)
     User.logout()
   }
 
+  const handleOpenLogin = () => {
+    setShowDialog('login')
+  }
+
+  const handleCloseDialog = () => {
+    setShowDialog(null)
+  }
+
   const handleOpenRegister = () => {
-    handleCloseUserMenu()
-    setShowRegDialog(true)
-  }
-
-  const handleCloseRegister = () => {
-    setShowRegDialog(false)
-  }
-
-  const handleRegisterSuccessful = () => {
-    handleCloseRegister()
+    setShowDialog('register')
   }
 
   useEffect(() => {
     handleCloseUserMenu()
+    setShowDialog(null)
   }, [User.user]);
 
   const textColor = Theme.palette.mode === 'light' ? Theme.palette.primary.contrastText : Theme.palette.primary.light
@@ -60,17 +61,22 @@ function UserAvatar() {
     return (
       <Box sx={{flexGrow: 0}}>
         <Dialog
-          open={showRegDialog}
-          onClose={handleCloseRegister}
+          open={!!showDialog}
+          onClose={handleCloseDialog}
         >
-          <DialogTitle>Register</DialogTitle>
           <DialogContent>
-            <RegisterPage onSuccess={handleRegisterSuccessful}/>
+            {showDialog === 'register' && <RegisterPage onSuccess={handleOpenLogin}/>}
+            {showDialog === 'login' && <LoginPage onSuccess={handleCloseDialog}/>}
           </DialogContent>
+          {showDialog === 'login' && <DialogActions>
+              <Button sx={{ml: 1}} onClick={handleOpenRegister}>
+                  Create an account
+              </Button>
+          </DialogActions>}
         </Dialog>
 
         <Tooltip title="Click to login">
-          <Button onClick={handleOpenUserMenu} sx={{p: 1}}>
+          <Button onClick={handleOpenLogin} sx={{p: 1}}>
             <Typography
               variant="h6"
               noWrap
@@ -82,30 +88,9 @@ function UserAvatar() {
                 color: textColor,
               }}
             >Login</Typography>
-            <LoginIcon sx={{ color: textColor }} />
+            <LoginIcon sx={{color: textColor}}/>
           </Button>
         </Tooltip>
-        <Menu
-          sx={{mt: '45px'}}
-          id="menu-appbar"
-          anchorEl={anchorElUser}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={Boolean(anchorElUser)}
-          onClose={handleCloseUserMenu}
-        >
-          <LoginPage />
-          <Button sx={{ml: 1}} onClick={handleOpenRegister}>
-            Create an account
-          </Button>
-        </Menu>
       </Box>
     );
   }
