@@ -12,6 +12,7 @@ export interface AuthContextProps {
   logout: () => void;
   checkTokenValidation: () => Promise<boolean>;
   getHeadersWithTokens: () => HeadersInit;
+  changeAttribute: <K extends keyof User>(key: K, value: User[K]) => Promise<void>,
 }
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
@@ -28,5 +29,6 @@ export interface HouseholdContextProps {
   households: Household[],
   join: (code: string) => Promise<void>,
   create: (name: string) => Promise<void>,
+  leave: (id: string) => Promise<void>,
 }
 export const HouseholdContext = createContext<HouseholdContextProps | undefined>(undefined)

@@ -12,7 +12,7 @@ const queryClient = new QueryClient()
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
   },
 });
 

@@ -31,6 +31,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user) {
+      getInfo()
+    }
+  }, [user?.id]);
+
   const validateToken = async (parsedUser?: User) => {
     if (!(await checkTokenValidation(parsedUser))) expireUser();
     else await getInfo();
@@ -176,6 +182,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     Toast.push("Logout was successful.");
   };
 
+  const changeAttribute = async <K extends keyof User>(key: K, value: User[K]) => {
+    Log.debug("User " + key + " changed to " + value)
+    // TODO send to server!
+    setUser(p => p && ({...p, [key]: value}))
+  }
+
   const getHeadersWithTokens = (): HeadersInit => {
     if (!user) throw new Error("User is not logged in");
 
@@ -196,6 +208,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         logout,
         checkTokenValidation,
         getHeadersWithTokens,
+        changeAttribute,
       }}
     >
       {children}

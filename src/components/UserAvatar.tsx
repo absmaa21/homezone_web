@@ -8,8 +8,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Typography,
-  useTheme
+  Typography, useTheme,
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import LoginIcon from '@mui/icons-material/Login';
@@ -54,6 +53,8 @@ function UserAvatar() {
     handleCloseUserMenu()
   }, [User.user]);
 
+  const textColor = Theme.palette.mode === 'light' ? Theme.palette.primary.contrastText : Theme.palette.primary.light
+
   // Show this if the user is not logged in
   if (!User.user) {
     return (
@@ -77,12 +78,11 @@ function UserAvatar() {
                 mr: 2,
                 display: {xs: 'none', md: 'flex'},
                 flexGrow: 1,
-                fontFamily: 'monospace',
-                color: Theme.palette.primary.contrastText,
                 textDecoration: 'none',
+                color: textColor,
               }}
             >Login</Typography>
-            <LoginIcon sx={{color: Theme.palette.primary.contrastText}}/>
+            <LoginIcon sx={{ color: textColor }} />
           </Button>
         </Tooltip>
         <Menu
