@@ -31,6 +31,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user) {
+      getInfo()
+    }
+  }, [user?.id]);
+
   const validateToken = async (parsedUser?: User) => {
     if (!(await checkTokenValidation(parsedUser))) expireUser();
     else await getInfo();
